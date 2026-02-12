@@ -4,6 +4,10 @@
 1. **Install a Userscript Manager**
    - [Tampermonkey](https://www.tampermonkey.net/) (Chrome, Firefox, Edge, Safari)
    - [Violentmonkey](https://violentmonkey.github.io/) (Chrome, Firefox)
+  
+2. **Install Ghostery Adblocker**
+   - Ghostery Adblock is the only adblock that will block the El Paso Times ads, and not trigger the Admiral anti adblock.
+   - [Ghostery](https://chromewebstore.google.com/detail/ghostery-tracker-ad-block/mlomiejdfkolichcflejclcbmpeaniij)
 
 2. **Install the Script**
    - Install from [Greasyfork](https://greasyfork.org/en/scripts/566039-connor-gutierrez-auto-voter)

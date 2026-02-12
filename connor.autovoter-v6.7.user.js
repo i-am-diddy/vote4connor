@@ -3,11 +3,11 @@
 // @namespace    https://github.com/i-am-diddy/vote4connor/
 // @version      6.7
 // @description  Auto-votes Connor Gutierrez on EPTimes
-// @author       i-am-diddy
+// @author       I-am-diddy
 // @match        https://www.elpasotimes.com/story/sports/high-school/2026/02/10/vote-el-paso-childrens-hospital-hs-male-athlete-for-feb-3-7/88578099007/*
 // @match        https://www.usatodaynetworkservice.com/tangstatic/html/ptx1/*
 // @grant        none
-// @license      MIT
+// @license	 MIT
 // ==/UserScript==
 
 (function() {
@@ -44,7 +44,17 @@
                 if (voteButton) {
                     console.log('Clicking vote button:', voteButton.textContent);
                     voteButton.click();
-                    console.log('Vote submitted!');
+                    console.log('Vote button clicked!');
+
+                    // Wait 0.5 seconds AFTER clicking vote before telling parent to reload
+                    setTimeout(function() {
+                        console.log('Telling parent to reload now...');
+                        try {
+                            window.top.postMessage('VOTE_COMPLETE', '*');
+                        } catch (e) {
+                            console.log('Could not notify parent:', e);
+                        }
+                    }, 500);
                 } else {
                     console.log('Vote button not found');
                 }
@@ -68,10 +78,12 @@
                     // Retry after 1.5 seconds if voting failed
                     setTimeout(tryVote, 1500);
                 } else if (!success) {
-                    console.log('Failed after', maxAttempts, 'attempts. Reloading page...');
-                    setTimeout(function() {
-                        window.top.location.reload();
-                    }, 1000);
+                    console.log('Failed after', maxAttempts, 'attempts. Telling parent to reload...');
+                    try {
+                        window.top.postMessage('RELOAD_NEEDED', '*');
+                    } catch (e) {
+                        console.log('Could not notify parent:', e);
+                    }
                 }
             }
 
@@ -89,14 +101,15 @@
 
     } else {
         // We're on the main page
-        console.log('Running on main page, waiting for iframe...');
+        console.log('Running on main page, waiting for vote submission...');
 
-        window.addEventListener('load', function() {
-            console.log('Main page loaded');
-            console.log('Reloading in 2 seconds...');
-            setTimeout(function() {
+        // Listen for messages from iframe
+        window.addEventListener('message', function(event) {
+            if (event.data === 'VOTE_COMPLETE' || event.data === 'RELOAD_NEEDED') {
+                console.log('Received reload signal from iframe:', event.data);
+                console.log('Reloading now...');
                 location.reload();
-            }, 2000);
+            }
         });
     }
 })();
